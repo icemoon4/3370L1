@@ -9,21 +9,108 @@ import java.util.ArrayList;
  * Wentworth Institute of Technology
  * COMP 3370
  * Lab Assignment 1
- * 
+ * Rachel Palmer
  */
 
 public class LAB1 {
 
-	// TODO: document this method
+	/* countingSort takes array input a.
+	 * count array is created to store a count of each number in a (max has been previously set)
+	 * The first for loop cycles through the array, increments count[a[x]] (the corresponding
+	 * index for each item in a)
+	 * output array is created to hold count values in order
+	 * The second for loop cycles through count, starting at 0
+	 * If count[x] isnt zero, then x is added to the output, and count[x] is decremented
+	 * At the end of the loop, output holds all values from a in order
+	 */
 	public static int[] countingSort(int[] a) {
-		//TODO: implement this method
-		return null;
+		int max = MAX_INPUT + 1;
+		
+		int count[] = new int[max];
+
+		//increment count index for each a value
+		for (int x = 0; x<a.length; x++){
+			count[a[x]]++;
+		}
+		
+		int output[] = new int[a.length];
+		int i = 0;
+		for(int x=0; x < count.length; x++){
+			while(count[x] != 0){
+				output[i] = x;
+				count[x]--;
+				i++;
+			}
+		}
+
+		return output;
 	}
 
-	// TODO: document this method
+	/*
+	 * radixSort takes input array a.
+	 * d represents the highest number of digits that any number will have
+	 * since our MAX_INPUT is set to 524287, then d will not be any higher than 6
+	 * k represents how many numbers can appear in a value of a (this sorting method will
+	 * use the decimal system, so only numbers 0-9 will appear)
+	 * place represents which position (starting from the right) the sort will check
+	 * count and pos are created which will represent values 0-9
+	 * output will contain the sorted array
+	 * The first for loop encases the reset of the function, and loops d times so that each 
+	 * place can be checked and sorted.
+	 * A for loop fills count and pos with 0's (to clear the array from previous loop)
+	 * currPos calculates which number in the input is being sorted (ex: for the first loop, 
+	 * number 2345, currPos will be 5, in the second loop will be 4, etc).
+	 * A for loop increments the number at the appropriate index for count, (similar 
+	 * to the counting sort above). Using the array of counted values, pos array is filled
+	 * where each index represents the count of numbers that are less than x.
+	 * In the next loop, the pos array determines where the input number from a will be stored.
+	 * pos[currPos] will represent the appropriate index in output, and then the value is 
+	 * increased. By increasing the value, this ensures that if the loop encounters that index
+	 * again, it will not store the number in the same index, and will instead move it up by
+	 * one position.
+	 * Finally, once output contains the sorted values, a is updated with these values, and 
+	 * place is multiplied by ten, so that when it loops again, the position to the left will
+	 * can be sorted.
+	 */
 	public static int[] radixSort(int[] a) {
-		// TODO: implement this method
-		return null;
+		int d = 6; 
+		int k = 10; 
+		int place = 1; 
+
+		int[] count = new int[k]; 
+		int[] pos = new int[k];
+		int[] output = new int[a.length];
+		
+		for(int i = 0; i < d; i++){ //i represents digit in place from right to left
+			for(int x=0; x < k; x++){
+				count[x] = 0;
+				pos[x] = 0;
+			}
+			
+			int currPos;
+			for(int x = 0; x < a.length; x++){ //x represent current digits 0-9
+				currPos = (a[x]/place)%10;
+				count[currPos]++;
+			}
+			
+			//use count to create pos array
+			for(int x = 1; x < k; x++){
+				pos[x] = pos[x-1] + count[x-1];
+			}
+
+			for(int x = 0; x < a.length; x++){
+				currPos = (a[x]/place)%10; 
+				output[pos[currPos]] = a[x];
+				pos[currPos]++;
+			}
+			
+			for(int x = 0; x < a.length; x++){
+				a[x] = output[x];
+			}
+			
+			place *= 10; //move to next digit place (tens -> hundreds -> etc )
+		}
+		return output;
 	}
 
 	/********************************************
